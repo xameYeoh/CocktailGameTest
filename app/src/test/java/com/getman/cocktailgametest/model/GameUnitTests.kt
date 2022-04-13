@@ -2,18 +2,15 @@ package com.getman.cocktailgametest.model
 
 import org.junit.Assert
 import org.junit.Test
+import java.util.*
 
 class GameUnitTests {
-    // 1
     @Test
     fun whenIncrementingScore_shouldIncrementCurrentScore() {
-        // 2
         val game = Game()
 
-        // 3
         game.incrementScore()
 
-        // 4
         Assert.assertEquals("Current score should have been 1", 1, game.currentScore)
     }
 
@@ -33,5 +30,36 @@ class GameUnitTests {
         game.incrementScore()
 
         Assert.assertEquals(10, game.highestScore)
+    }
+
+    @Test
+    fun whenGettingNextQuestion_shouldReturnFirstFromList() {
+        val questions = LinkedList<Question>()
+        questions.addAll(listOf(
+            Question("Correct1", "Incorrect1"),
+            Question("Correct2", "Incorrect2"),
+            Question("Correct3", "Incorrect3"),
+            Question("Correct4", "Incorrect4"),
+        ))
+
+        val firstQuestion = questions.first
+        val game = Game(questionsList = questions)
+
+        val question = game.nextQuestion()
+
+        Assert.assertEquals(firstQuestion, question)
+    }
+
+    @Test
+    fun whenGettingNextQuestion_withoutMoreQuestions_shouldReturnNull() {
+        val questions = LinkedList<Question>()
+        questions.add(Question("Correct", "Incorrect"))
+
+        val game = Game(questionsList = questions)
+
+        game.nextQuestion()
+        val question = game.nextQuestion()
+
+        Assert.assertNull(question)
     }
 }

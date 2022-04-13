@@ -15,4 +15,11 @@ class Question(private val correctOption: String, private val incorrectOption: S
 
         return answeredOption == correctOption
     }
+
+    fun getOptions(shuffle: (MutableList<String>) -> Unit = { it.shuffled() }): List<String> {
+        val options = mutableListOf(correctOption, incorrectOption)
+        shuffle(options)
+
+        return options
+    }
 }

@@ -3,6 +3,7 @@ package com.getman.cocktailgametest.model
 import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
+import java.util.Collections.shuffle
 
 class QuestionUnitTests {
     private lateinit var question: Question
@@ -41,5 +42,37 @@ class QuestionUnitTests {
     @Test(expected = IllegalArgumentException::class)
     fun whenAnswering_withInvalidOption_shouldThrowException() {
         question.answer("INVALID")
+    }
+
+    @Test
+    fun whenGettingOptions_shouldReturnShuffledList() {
+        val options = question.getOptions()
+
+        Assert.assertTrue(options is List<String>)
+    }
+
+    @Test
+    fun whenGettingOptions_shouldContainCorrectAndIncorrectOptions() {
+        val options = question.getOptions()
+        var countCorrect = 0
+        var countIncorrect = 0
+
+        for (option in options) {
+            question.answer(option)
+            if (question.isAnsweredCorrectly)
+                countCorrect++
+            else
+                countIncorrect++
+        }
+
+        Assert.assertTrue(countCorrect > 0)
+        Assert.assertTrue(countIncorrect > 0)
+    }
+
+    @Test
+    fun whenGettingOptions_shouldTakeLambdaForShuffling() {
+        question.getOptions {
+            it.shuffled()
+        }
     }
 }
