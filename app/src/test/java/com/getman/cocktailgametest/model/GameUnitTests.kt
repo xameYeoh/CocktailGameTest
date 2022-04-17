@@ -2,6 +2,10 @@ package com.getman.cocktailgametest.model
 
 import org.junit.Assert
 import org.junit.Test
+import org.mockito.kotlin.eq
+import org.mockito.kotlin.mock
+import org.mockito.kotlin.times
+import org.mockito.kotlin.verify
 import java.util.*
 
 class GameUnitTests {
@@ -25,7 +29,7 @@ class GameUnitTests {
 
     @Test
     fun whenIncrementingScore_belowHighScore_shouldNotIncrementHighScore() {
-        val game = Game(10)
+        val game = Game(highest = 10)
 
         game.incrementScore()
 
@@ -43,7 +47,7 @@ class GameUnitTests {
         ))
 
         val firstQuestion = questions.first
-        val game = Game(questionsList = questions)
+        val game = Game(questions)
 
         val question = game.nextQuestion()
 
@@ -55,11 +59,21 @@ class GameUnitTests {
         val questions = LinkedList<Question>()
         questions.add(Question("Correct", "Incorrect"))
 
-        val game = Game(questionsList = questions)
+        val game = Game(questions)
 
         game.nextQuestion()
         val question = game.nextQuestion()
 
         Assert.assertNull(question)
+    }
+
+    @Test
+    fun whenAnswering_shouldDelegateToQuestion() {
+        val question = mock<Question>()
+        val game = Game(listOf(question))
+
+        game.answer(question, "OPTION")
+
+        verify(question).answer(eq("OPTION"))
     }
 }
