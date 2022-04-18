@@ -1,41 +1,13 @@
 package com.getman.cocktailgametest.model
 
 import org.junit.Assert
+import org.junit.Assert.assertEquals
 import org.junit.Test
-import org.mockito.kotlin.eq
-import org.mockito.kotlin.mock
-import org.mockito.kotlin.times
-import org.mockito.kotlin.verify
+import org.mockito.ArgumentMatchers.anyString
+import org.mockito.kotlin.*
 import java.util.*
 
 class GameUnitTests {
-    @Test
-    fun whenIncrementingScore_shouldIncrementCurrentScore() {
-        val game = Game()
-
-        game.incrementScore()
-
-        Assert.assertEquals("Current score should have been 1", 1, game.currentScore)
-    }
-
-    @Test
-    fun whenIncrementingScore_aboveHighScore_shouldAlsoIncrementHighScore() {
-        val game = Game()
-
-        game.incrementScore()
-
-        Assert.assertEquals(1, game.highestScore)
-    }
-
-    @Test
-    fun whenIncrementingScore_belowHighScore_shouldNotIncrementHighScore() {
-        val game = Game(highest = 10)
-
-        game.incrementScore()
-
-        Assert.assertEquals(10, game.highestScore)
-    }
-
     @Test
     fun whenGettingNextQuestion_shouldReturnFirstFromList() {
         val questions = LinkedList<Question>()
@@ -75,5 +47,32 @@ class GameUnitTests {
         game.answer(question, "OPTION")
 
         verify(question).answer(eq("OPTION"))
+    }
+
+    @Test
+    fun whenAnsweringCorrectly_shouldIncrementCurrentScore() {
+        // Given
+        val question = mock<Question>()
+        whenever(question.answer(anyString())).thenReturn(true)
+        val game = Game(listOf(question))
+        // When
+        game.answer(question, "OPTION")
+
+        // Then
+        assertEquals(1, game.currentScore)
+    }
+
+    @Test
+    fun whenAnsweringIncorrectly_shouldNotIncrementScore() {
+        // Given
+        val question = mock<Question>()
+        whenever(question.answer(anyString())).thenReturn(false)
+        val game = Game(listOf(question))
+
+        // When
+        game.answer(question, "OPTION")
+
+        // Then
+        assertEquals(0, game.currentScore)
     }
 }
